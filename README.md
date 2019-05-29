@@ -1,3 +1,3 @@
 # Python FSM
 
-Python FSM finite state machine library for python
+Python FSM is a finite state machine library for python
