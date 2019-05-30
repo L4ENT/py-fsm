@@ -5,13 +5,16 @@ import contextlib
 from functools import wraps
 from typing import Generator
 
-from pyfsm.exceprions import UnreleasedTransition
+from pyfsm.exceprions import UnreleasedTransition, ProposalStatesForbidden
 
 
 class State:
 
-    def __init__(self, state_generator: Generator) -> None:
+    def __init__(
+            self, state_generator: Generator,
+            forbid_proposal: bool = True) -> None:
         assert state_generator
+        self.forbid_proposal = forbid_proposal
         self._state_generator: Generator = state_generator
         self.state_name = state_generator.gi_code.co_name
 
@@ -38,12 +41,17 @@ class State:
             next(self._state_generator)
 
 
-def as_state(func):
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        generator = func(self, *args, **kwargs)
-        return self.state_class(generator)
-    return wrapper
+def as_state(forbid_proposal: bool = True):
+    def inner_func(func):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            generator = func(self, *args, **kwargs)
+            return self.state_class(
+                generator,
+                forbid_proposal=forbid_proposal
+            )
+        return wrapper
+    return inner_func
 
 
 class FSM:
@@ -86,8 +94,10 @@ class FSM:
         if it necessary. Anyway proposed_state will be send to yield of state.
         :param proposed_state: State object
         """
-        if not isinstance(proposed_state, State):
-            TypeError(f'state must be instance of {State}')
+        if proposed_state and not isinstance(proposed_state, State):
+            raise TypeError(f'state must be instance of {State}')
+        if proposed_state and self.state.forbid_proposal:
+            raise ProposalStatesForbidden()
         self.state.next(proposed_state)
 
     @as_state

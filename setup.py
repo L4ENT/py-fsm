@@ -7,7 +7,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setuptools.setup(
     name="py-fsm",
-    version="0.0.2",
+    version="0.0.3",
     author="Dmitry Kotov",
     author_email="dmalexkotov@gmail.com",
     description="Python FSM - finite state machine library for python.",

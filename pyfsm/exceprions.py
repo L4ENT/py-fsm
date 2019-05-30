@@ -18,3 +18,7 @@ class UnreleasedTransition(Exception):
             'message': self.message,
             'errors': self.errors
         }
+
+
+class ProposalStatesForbidden(UnreleasedTransition):
+    """If trying to set state forcefully when it forbidden."""
