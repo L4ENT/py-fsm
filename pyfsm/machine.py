@@ -1,3 +1,6 @@
+"""
+TODO: Cross machine communication
+"""
 import contextlib
 from functools import wraps
 from typing import Generator
@@ -69,7 +72,7 @@ class FSM:
         :param state: State object
         """
         if not isinstance(state, State):
-            TypeError(f'state must be instance of {State}')
+            raise TypeError(f'state must be instance of {State}')
         # If UnreleasedTransition will raised the state remains unchanged
         with contextlib.suppress(UnreleasedTransition):
             # Trying to init new state
